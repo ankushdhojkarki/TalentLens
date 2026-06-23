@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}TalentLens — See your résumé clearly{% endblock %}</title>
+  <meta name="description" content="AI-powered résumé reviewer. Upload your CV and get structured, actionable feedback in seconds." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/talentlens.css' %}" />
+</head>
+<body>
+  <!-- Custom cursor -->
+  <div class="cursor" aria-hidden="true">
+    <div class="cursor__dot"></div>
+    <div class="cursor__ring"></div>
+  </div>
+
+  <!-- Starfield + aurora background -->
+  <canvas id="starfield" class="starfield" aria-hidden="true"></canvas>
+  <div class="aurora" aria-hidden="true">
+    <div class="aurora__blob aurora__blob--1"></div>
+    <div class="aurora__blob aurora__blob--2"></div>
+    <div class="aurora__blob aurora__blob--3"></div>
+    <div class="aurora__grain"></div>
+  </div>
+
+  <!-- Page loader -->
+  <div class="page-loader" id="page-loader" aria-hidden="true">
+    <div class="page-loader__ring"></div>
+    <div class="page-loader__label">TalentLens</div>
+  </div>
+
+  <!-- Scroll progress bar -->
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- Smooth scroll wrapper -->
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+
+      <header class="site-nav">
+        <div class="site-nav__inner">
+          <a href="{% url 'index' %}" class="brand">
+            <span class="lens-mark" aria-hidden="true">
+              <span class="lens-mark__ring"></span>
+              <span class="lens-mark__ring lens-mark__ring--2"></span>
+              <span class="lens-mark__pupil"></span>
+            </span>
+            <span class="brand__name">TalentLens</span>
+          </a>
+          <nav class="site-nav__links">
+            <a href="{% url 'index' %}#how" class="nav-link">How it works</a>
+            <a href="{% url 'index' %}#features" class="nav-link">Features</a>
+            <a href="{% url 'index' %}#faq" class="nav-link">FAQ</a>
+            <a href="{% url 'index' %}#upload" class="btn-ghost magnetic">Try it free</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="main">
+        {% block content %}{% endblock %}
+      </main>
+
+      <footer class="site-footer">
+        <div class="site-footer__inner">
+          <p class="site-footer__brand">TalentLens</p>
+          <p class="site-footer__meta">© {% now "Y" %} — crafted with Django · Gemini · Vercel</p>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- SVG defs (gradients used by stroke=url(#..)) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#e8d690"/>
+        <stop offset="100%" stop-color="#c9a84c"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <script src="{% static 'js/talentlens.js' %}"></script>
+  {% block scripts %}{% endblock %}
+  <script src="{% static 'js/talentlens.js' %}"></script>
+</body>
+</html>
