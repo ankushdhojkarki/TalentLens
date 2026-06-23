@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}TalentLens — See your resume clearly{% endblock %}</title>
+  <meta name="description" content="AI-powered resume reviewer. Upload your CV and get structured, actionable feedback in seconds." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Tailwind (CDN — swap for build pipeline in production) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Instrument Serif"', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            ink: '#0a0a0f',
+            paper: '#f5f3ee',
+            lens: '#c9a84c',
+            beam: '#e8d690',
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="stylesheet" href="{% static 'css/talentlens.css' %}" />
+</head>
+<body class="bg-ink text-paper font-sans antialiased overflow-x-hidden">
+
+  <!-- Ambient aurora background -->
+  <div class="aurora" aria-hidden="true">
+    <div class="aurora__blob aurora__blob--1"></div>
+    <div class="aurora__blob aurora__blob--2"></div>
+    <div class="aurora__blob aurora__blob--3"></div>
+    <div class="aurora__grain"></div>
+  </div>
+
+  <!-- Nav -->
+  <header class="relative z-20 mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6">
+    <a href="{% url 'index' %}" class="flex items-center gap-3 group">
+      <span class="lens-mark" aria-hidden="true">
+        <span class="lens-mark__ring"></span>
+        <span class="lens-mark__pupil"></span>
+      </span>
+      <span class="font-serif text-2xl tracking-tight">TalentLens</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-8 text-sm text-paper/70">
+      <a href="#how" class="nav-link">How it works</a>
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#faq" class="nav-link">FAQ</a>
+      <a href="{% url 'index' %}#upload" class="btn-ghost">Try it free</a>
+    </nav>
+  </header>
+
+  <main class="relative z-10">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="relative z-10 mt-32 border-t border-paper/10">
+    <div class="mx-auto flex w-full max-w-7xl flex-col gap-4 px-6 py-10 md:flex-row md:items-center md:justify-between">
+      <p class="font-serif text-xl">TalentLens</p>
+      <p class="text-xs text-paper/40 font-mono">© {% now "Y" %} — Crafted with Django · Gemini · Vercel</p>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/talentlens.js' %}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

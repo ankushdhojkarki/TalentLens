@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Your résumé analysis · TalentLens{% endblock %}
+
+{% block content %}
+<section class="relative mx-auto w-full max-w-6xl px-6 pt-12 pb-32">
+
+  <a href="{% url 'index' %}" class="btn-link reveal" data-reveal>← Analyze another</a>
+
+  <div class="results-header mt-8 reveal" data-reveal>
+    <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-lens">✓ Analysis complete</span>
+    <h1 class="font-serif text-5xl md:text-7xl mt-3 leading-[0.95] text-balance">
+      Here's what we found in<br/>
+      <span class="italic text-lens">{{ filename|default:"your résumé" }}</span>.
+    </h1>
+  </div>
+
+  <!-- Score panel -->
+  <div class="results-score mt-16 reveal" data-reveal>
+    <div class="results-score__ring">
+      <svg viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="88" class="score-ring__bg"/>
+        <circle cx="100" cy="100" r="88" class="score-ring__fg"
+                style="--p: {{ score|default:84|floatformat:0 }}; --p: calc({{ score|default:84 }} / 100)"/>
+      </svg>
+      <div class="results-score__num font-serif" data-counter data-target="{{ score|default:84 }}">0</div>
+      <div class="results-score__label font-mono text-xs uppercase tracking-widest text-paper/50">overall</div>
+    </div>
+    <div class="results-score__meta">
+      <p class="font-serif text-3xl leading-tight">{{ verdict|default:"Strong foundation. A few high-leverage fixes away from excellent." }}</p>
+      <div class="results-score__bars">
+        {% for cat in categories %}
+          <div class="bar reveal" data-reveal>
+            <div class="bar__head">
+              <span>{{ cat.name }}</span>
+              <span class="font-mono text-sm">{{ cat.score }}</span>
+            </div>
+            <div class="bar__track"><div class="bar__fill" style="--v: {{ cat.score }}%"></div></div>
+          </div>
+        {% empty %}
+          {% for c in "Clarity,82|Impact,76|Keywords,71|Formatting,90"|cut:""|slice:":" %}{% endfor %}
+          <div class="bar"><div class="bar__head"><span>Clarity</span><span class="font-mono text-sm">82</span></div><div class="bar__track"><div class="bar__fill" style="--v: 82%"></div></div></div>
+          <div class="bar"><div class="bar__head"><span>Impact</span><span class="font-mono text-sm">76</span></div><div class="bar__track"><div class="bar__fill" style="--v: 76%"></div></div></div>
+          <div class="bar"><div class="bar__head"><span>Keywords</span><span class="font-mono text-sm">71</span></div><div class="bar__track"><div class="bar__fill" style="--v: 71%"></div></div></div>
+          <div class="bar"><div class="bar__head"><span>Formatting</span><span class="font-mono text-sm">90</span></div><div class="bar__track"><div class="bar__fill" style="--v: 90%"></div></div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Sections -->
+  <div class="results-grid mt-24">
+    <div class="result-card result-card--good reveal" data-reveal>
+      <span class="result-card__tag">What's working</span>
+      <ul class="result-list">
+        {% for item in strengths %}
+          <li>{{ item }}</li>
+        {% empty %}
+          <li>Clear chronological structure with consistent date formatting.</li>
+          <li>Strong action verbs in the most recent role.</li>
+          <li>Education and certifications well-placed.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="result-card result-card--warn reveal" data-reveal>
+      <span class="result-card__tag">What's missing</span>
+      <ul class="result-list">
+        {% for item in gaps %}
+          <li>{{ item }}</li>
+        {% empty %}
+          <li>No quantified outcomes in 4 of 9 bullets.</li>
+          <li>Missing keywords: Kubernetes, A/B testing, OKRs.</li>
+          <li>No summary statement at the top.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Rewrites -->
+  <div class="mt-24 reveal" data-reveal>
+    <h2 class="font-serif text-4xl md:text-5xl text-balance">Line-by-line <span class="italic text-paper/50">rewrites</span></h2>
+    <p class="text-paper/60 mt-3 max-w-2xl">Copy any rewrite and paste it straight into your résumé — each suggestion is carefully crafted to boost impact and clarity.</p>
+  </div>
+
+  <div class="rewrites mt-10">
+    {% for r in rewrites %}
+      <article class="rewrite reveal" data-reveal>
+        <div class="rewrite__col rewrite__col--before">
+          <span class="diff__label">Before</span>
+          <p>{{ r.before }}</p>
+        </div>
+        <div class="rewrite__col rewrite__col--after">
+          <span class="diff__label">After</span>
+          <p>{{ r.after }}</p>
+          <button class="copy-btn" data-copy="{{ r.after }}">Copy</button>
+        </div>
+      </article>
+    {% empty %}
+      <article class="rewrite reveal" data-reveal>
+        <div class="rewrite__col rewrite__col--before"><span class="diff__label">Before</span><p>Worked on improving the checkout flow.</p></div>
+        <div class="rewrite__col rewrite__col--after"><span class="diff__label">After</span><p>Redesigned checkout flow, lifting conversion 14% and reducing drop-off by 2.3s.</p><button class="copy-btn" data-copy="Redesigned checkout flow, lifting conversion 14% and reducing drop-off by 2.3s.">Copy</button></div>
+      </article>
+      <article class="rewrite reveal" data-reveal>
+        <div class="rewrite__col rewrite__col--before"><span class="diff__label">Before</span><p>Helped team with deployments and CI.</p></div>
+        <div class="rewrite__col rewrite__col--after"><span class="diff__label">After</span><p>Migrated CI to GitHub Actions, cutting build times from 14m to 4m across 22 services.</p><button class="copy-btn" data-copy="Migrated CI to GitHub Actions, cutting build times from 14m to 4m across 22 services.">Copy</button></div>
+      </article>
+      <article class="rewrite reveal" data-reveal>
+        <div class="rewrite__col rewrite__col--before"><span class="diff__label">Before</span><p>Responsible for analytics and reporting.</p></div>
+        <div class="rewrite__col rewrite__col--after"><span class="diff__label">After</span><p>Owned product analytics stack (Segment + BigQuery), shipping 9 dashboards used weekly by 40+ stakeholders.</p><button class="copy-btn" data-copy="Owned product analytics stack (Segment + BigQuery), shipping 9 dashboards used weekly by 40+ stakeholders.">Copy</button></div>
+      </article>
+    {% endfor %}
+  </div>
+
+  <div class="mt-20 flex flex-wrap gap-4 reveal" data-reveal>
+    <a href="{% url 'index' %}" class="btn-primary magnetic smooth-transition">Analyze another résumé</a>
+    <button class="btn-ghost smooth-transition" onclick="window.print()">Download report</button>
+  </div>
+</section>
+{% endblock %}
