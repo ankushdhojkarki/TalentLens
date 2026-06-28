@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- ============== HERO ============== -->
+<section class="hero relative mx-auto w-full max-w-7xl px-6 pt-16 pb-32 md:pt-24">
+  <div class="hero__tag reveal" data-reveal>
+    <span class="hero__tag-dot"></span>
+    <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-paper/60">v1.0 · powered by Gemini</span>
+  </div>
+
+  <h1 class="hero__title font-serif text-[clamp(3rem,9vw,8rem)] leading-[0.95] tracking-tight mt-8 text-balance">
+    <span class="reveal-word" data-reveal>See</span>
+    <span class="reveal-word" data-reveal>your</span>
+    <span class="reveal-word italic text-lens" data-reveal>resume</span>
+    <br />
+    <span class="reveal-word" data-reveal>clearly.</span>
+  </h1>
+
+  <p class="hero__sub mt-8 max-w-xl text-lg text-paper/70 reveal" data-reveal>
+    Upload your PDF. In seconds, TalentLens reveals what's working, what's missing, and exactly what to fix —
+    from keywords to impact to clarity.
+  </p>
+
+  <div class="hero__cta mt-10 flex flex-wrap items-center gap-4 reveal" data-reveal>
+    <a href="#upload" class="btn-primary magnetic smooth-transition" style="position: relative;">
+      <span>Analyze my resume</span>
+      <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+    <a href="#how" class="btn-link smooth-transition">See how it works →</a>
+  </div>
+
+  <!-- Animated lens visual -->
+  <div class="lens-stage" aria-hidden="true">
+    <div class="lens-stage__aperture">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="lens-stage__beam"></div>
+    <div class="lens-stage__ring lens-stage__ring--1"></div>
+    <div class="lens-stage__ring lens-stage__ring--2"></div>
+    <div class="lens-stage__ring lens-stage__ring--3"></div>
+  </div>
+
+  <!-- Marquee strip -->
+  <div class="marquee mt-24 reveal" data-reveal>
+    <div class="marquee__track">
+      {% for word in "Clarity · Impact · Keywords · ATS · Formatting · Tone · Quantified results · Action verbs · Skills gap · Tailoring"|cut:" "|slice:":" %}{% endfor %}
+      <span>Clarity</span><span>·</span><span>Impact</span><span>·</span><span>Keywords</span><span>·</span><span>ATS-ready</span><span>·</span><span>Formatting</span><span>·</span><span>Tone</span><span>·</span><span>Quantified results</span><span>·</span><span>Action verbs</span><span>·</span><span>Skills gap</span><span>·</span><span>Tailoring</span><span>·</span>
+      <span>Clarity</span><span>·</span><span>Impact</span><span>·</span><span>Keywords</span><span>·</span><span>ATS-ready</span><span>·</span><span>Formatting</span><span>·</span><span>Tone</span><span>·</span><span>Quantified results</span><span>·</span><span>Action verbs</span><span>·</span><span>Skills gap</span><span>·</span><span>Tailoring</span><span>·</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== UPLOAD ============== -->
+<section id="upload" class="relative mx-auto w-full max-w-5xl px-6 py-24">
+  <div class="section-eyebrow reveal" data-reveal>
+    <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-lens">01 · Upload</span>
+  </div>
+  <h2 class="font-serif text-5xl md:text-6xl mt-4 reveal text-balance" data-reveal>Drop your resume.<br/><span class="italic text-paper/50">We do the rest.</span></h2>
+
+  <form
+    id="upload-form"
+    class="dropzone mt-12 reveal"
+    data-reveal
+    method="post"
+    action="{% url 'analyze' %}"
+    enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <input type="file" id="resume-file" name="resume" accept="application/pdf" hidden />
+
+    <div class="dropzone__inner" id="dropzone">
+      <div class="dropzone__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" class="h-12 w-12">
+          <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+        </svg>
+      </div>
+      <p class="dropzone__title font-serif text-3xl mt-4">Drag your PDF here</p>
+      <p class="dropzone__sub text-paper/50 mt-2">or <button type="button" id="browse-btn" class="underline decoration-lens decoration-2 underline-offset-4 text-paper">browse files</button> · max 10MB</p>
+
+      <div class="dropzone__filemeta hidden" id="file-meta">
+        <div class="filemeta__icon">PDF</div>
+        <div class="filemeta__info">
+          <p class="filemeta__name" id="file-name">—</p>
+          <p class="filemeta__size font-mono text-xs text-paper/50" id="file-size">0 KB</p>
+        </div>
+        <button type="button" id="remove-file" class="filemeta__remove" aria-label="Remove file">×</button>
+      </div>
+    </div>
+
+    <button type="submit" id="analyze-btn" class="btn-primary btn-primary--lg mt-8 w-full justify-center magnetic smooth-transition" disabled>
+      <span class="btn-label">Analyze resume</span>
+      <span class="btn-spinner" aria-hidden="true"></span>
+    </button>
+  </form>
+</section>
+
+<!-- ============== HOW IT WORKS ============== -->
+<section id="how" class="relative mx-auto w-full max-w-7xl px-6 py-24">
+  <div class="section-eyebrow reveal" data-reveal>
+    <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-lens">02 · How it works</span>
+  </div>
+  <h2 class="font-serif text-5xl md:text-6xl mt-4 max-w-3xl reveal" data-reveal>
+    Three steps. <span class="italic text-paper/50">Zero guesswork.</span>
+  </h2>
+
+  <div class="steps mt-16">
+    <article class="step reveal" data-reveal>
+      <div class="step__num font-serif">01</div>
+      <h3 class="step__title">Upload</h3>
+      <p class="step__body">Drop in your resume PDF. Encrypted in transit, parsed locally, never stored.</p>
+    </article>
+    <article class="step reveal" data-reveal>
+      <div class="step__num font-serif">02</div>
+      <h3 class="step__title">Analyze</h3>
+      <p class="step__body">Gemini reads every line — structure, impact, keywords, tone — against modern hiring standards.</p>
+    </article>
+    <article class="step reveal" data-reveal>
+      <div class="step__num font-serif">03</div>
+      <h3 class="step__title">Improve</h3>
+      <p class="step__body">Get a scored report with concrete rewrites you can paste straight back into your CV.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============== FEATURES ============== -->
+<section id="features" class="relative mx-auto w-full max-w-7xl px-6 py-24">
+  <div class="section-eyebrow reveal" data-reveal>
+    <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-lens">03 · What you get</span>
+  </div>
+  <h2 class="font-serif text-5xl md:text-6xl mt-4 max-w-3xl reveal" data-reveal>
+    A complete <span class="italic text-lens">lens</span> on your candidacy.
+  </h2>
+
+  <div class="features-grid mt-16">
+    <div class="feature feature--lg reveal" data-reveal>
+      <span class="feature__tag">Overall Score</span>
+      <div class="score-ring">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" class="score-ring__bg"/>
+          <circle cx="60" cy="60" r="52" class="score-ring__fg" style="--p: 0.84"/>
+        </svg>
+        <div class="score-ring__num font-serif">84</div>
+      </div>
+      <p class="feature__title">Composite resume score</p>
+      <p class="feature__body">A weighted score across clarity, impact, keywords, and formatting — so you know exactly where you stand.</p>
+    </div>
+
+    <div class="feature reveal" data-reveal>
+      <span class="feature__tag">Keywords</span>
+      <p class="feature__title">ATS keyword match</p>
+      <p class="feature__body">Detects the terms recruiters and bots search for — and the ones you're missing.</p>
+      <div class="chip-row">
+        <span class="chip chip--good">Python</span>
+        <span class="chip chip--good">React</span>
+        <span class="chip chip--miss">Kubernetes</span>
+        <span class="chip chip--miss">A/B testing</span>
+      </div>
+    </div>
+
+    <div class="feature reveal" data-reveal>
+      <span class="feature__tag">Impact</span>
+      <p class="feature__title">Quantify every bullet</p>
+      <p class="feature__body">Flags weak verbs and unmeasured claims, then rewrites them with numbers and outcomes.</p>
+    </div>
+
+    <div class="feature reveal" data-reveal>
+      <span class="feature__tag">Formatting</span>
+      <p class="feature__title">Layout & readability</p>
+      <p class="feature__body">Catches inconsistent spacing, dense paragraphs, and ATS-breaking design choices.</p>
+    </div>
+
+    <div class="feature feature--wide reveal" data-reveal>
+      <span class="feature__tag">Rewrites</span>
+      <p class="feature__title">Line-by-line suggestions</p>
+      <p class="feature__body">Every flagged bullet comes with a before / after you can copy-paste in one click.</p>
+      <div class="diff">
+        <div class="diff__col diff__col--before">
+          <span class="diff__label">Before</span>
+          <p>Responsible for managing the team and improving processes.</p>
+        </div>
+        <div class="diff__col diff__col--after">
+          <span class="diff__label">After</span>
+          <p>Led 7-person team, shipping 12 features that cut onboarding time by 38%.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FAQ ============== -->
+<section id="faq" class="relative mx-auto w-full max-w-4xl px-6 py-24">
+  <div class="section-eyebrow reveal" data-reveal>
+    <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-lens">04 · FAQ</span>
+  </div>
+  <h2 class="font-serif text-5xl md:text-6xl mt-4 reveal" data-reveal>Common questions.</h2>
+
+  <div class="faq mt-12">
+    {% for q in faqs %}
+      <details class="faq__item reveal" data-reveal>
+        <summary>{{ q.q }}<span class="faq__plus" aria-hidden="true"></span></summary>
+        <p>{{ q.a }}</p>
+      </details>
+    {% empty %}
+      <details class="faq__item reveal" data-reveal>
+        <summary>Is my resume stored?<span class="faq__plus" aria-hidden="true"></span></summary>
+        <p>No. Files are processed in-memory and discarded after analysis. Nothing is written to disk or kept by Gemini.</p>
+      </details>
+      <details class="faq__item reveal" data-reveal>
+        <summary>What file types are supported?<span class="faq__plus" aria-hidden="true"></span></summary>
+        <p>PDF only, for now. DOCX and pasted text are on the roadmap.</p>
+      </details>
+      <details class="faq__item reveal" data-reveal>
+        <summary>How accurate is the scoring?<span class="faq__plus" aria-hidden="true"></span></summary>
+        <p>The score is best treated as directional guidance — the rewrites, however, are immediately actionable.</p>
+      </details>
+      <details class="faq__item reveal" data-reveal>
+        <summary>Is it free?<span class="faq__plus" aria-hidden="true"></span></summary>
+        <p>Yes. TalentLens is free during the v1 launch.</p>
+      </details>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ============== CTA ============== -->
+<section class="relative mx-auto w-full max-w-5xl px-6 py-24">
+  <div class="cta reveal" data-reveal>
+    <h2 class="font-serif text-5xl md:text-7xl leading-none">
+      Stop guessing.<br/><span class="italic text-lens">Start interviewing.</span>
+    </h2>
+    <a href="#upload" class="btn-primary btn-primary--lg mt-10 magnetic">
+      Analyze my resume
+      <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
+
+{% endblock %}
