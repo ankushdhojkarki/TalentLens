@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Your résumé analysis · TalentLens{% endblock %}
+{% block title %}Your resume analysis · TalentLens{% endblock %}
 
 {% block content %}
 <section class="relative mx-auto w-full max-w-6xl px-6 pt-12 pb-32">
@@ -114,7 +114,7 @@
   </div>
 
   <div class="mt-20 flex flex-wrap gap-4 reveal" data-reveal>
-    <a href="{% url 'index' %}" class="btn-primary magnetic smooth-transition">Analyze another résumé</a>
+    <a href="{% url 'index' %}" class="btn-primary magnetic smooth-transition">Analyze another resume</a>
     <button class="btn-ghost smooth-transition" onclick="window.print()">Download report</button>
   </div>
 </section>
